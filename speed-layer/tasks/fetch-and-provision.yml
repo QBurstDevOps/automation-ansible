@@ -1,0 +1,18 @@
+---
+- name: Fetch git hub url for docker configuration 
+  user: ubuntu
+  sudo: True
+  hosts: speed-layer
+  tasks: 
+  - name: Fetching repo from github 
+    git: repo=https://github.com/QBurstDevOps/docker.git
+         dest=/home/ubuntu/docker
+         version=master
+  
+  - name: Copy script for provisioning dockers in speed layer
+    copy: src=../files/ksz.sh dest=/home/ubuntu/kickoff.sh owner=ubuntu group=ubuntu mode=755
+  
+  - name: Execute script
+    command: /home/ubuntu/kickoff.sh
+
+  - pause: minutes=3

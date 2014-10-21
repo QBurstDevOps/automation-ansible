@@ -1,0 +1,36 @@
+---
+- name: Example of provisioning servers
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: Launch instances
+      local_action:
+        module: ec2
+        region: us-east-1
+        keypair: project-rt
+        group: project-rt 
+        instance_type: m1.medium
+        image: ami-2e7fc546
+        count: 2
+        wait: yes
+      register: ec2
+
+    - name: Add speed-layer instances to host group
+      local_action: add_host hostname={{ item.public_ip }} groupname=speed-layer
+      with_items: ec2.instances
+
+    - name: Add tag to instances
+      local_action: ec2_tag resource={{ item.id }} region=us-east-1 state=present
+      with_items: ec2.instances
+      args:
+        tags:
+          Name: storm-kafka-zk 
+   
+    - name: Pause for 1 minute
+      action: pause minutes=1 
+   
+- name: Configure provisioned servers
+  hosts: speed-layer
+  remote_user: ubuntu
+  sudo: True
+  include: ../tasks/fetch-and-provision.yml
