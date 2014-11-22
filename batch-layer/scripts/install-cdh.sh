@@ -22,7 +22,7 @@ rm key
 fi
 apt-get update
 export DEBIAN_FRONTEND=noninteractive
-apt-get -q -y --force-yes install oracle-j2sdk1.7 cloudera-manager-server cloudera-manager-daemons
+apt-get -q -y --force-yes install oracle-j2sdk1.7 cloudera-manager-server cloudera-manager-daemons  cloudera-manager-server-db
 service cloudera-scm-server-db initdb
 service cloudera-scm-server-db start
 service cloudera-scm-server start
